@@ -1,3 +1,0 @@
-"""
-@description: the city model
-"""
