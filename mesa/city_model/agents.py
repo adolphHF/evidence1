@@ -1,5 +1,7 @@
 import mesa
 from mesa import Agent
+from pruebitaBFS import generate_route #import function to generate the full path the agent should follows
+#TODO not obeying the semaphores
 
 #First the traffic light agent
 
@@ -37,5 +39,22 @@ class CarAgent(Agent):
     def __init__(self, model):
         super().__init__(model)
         self.parked = False
+        self.route = generate_route((9,1), (6,5)) #TODO this should come from the model, as start and end
+
+    def step(self):
+        """Perform one step in the simulation."""
+        if self.route:
+            # Get the next position in the route
+            next_position = self.route.pop(0)  # Remove and get the first step
+            # Move the agent to the next position
+            self.model.grid.move_agent(self, next_position)
+            # Update current position
+            self.current_position = next_position
+            print(f"Moved to {next_position}. Remaining route: {self.route}")
+
+        else:
+            # Route is empty, the car has reached its destination
+            self.parked = True
+            print("Car is parked. Route complete.")
 
 
