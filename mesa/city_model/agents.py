@@ -35,10 +35,10 @@ class TrafficLightAgent(Agent):
 
 class CarAgent(Agent):
     """Agente que representa un vehículo que puede moverse en el modelo."""
-    def __init__(self, model):
+    def __init__(self, model, start, end):
         super().__init__(model)
         self.parked = False
-        self.route = generate_route((9,1), (6,5)) #TODO this should come from the model, as start and end
+        self.route = generate_route(start, end) #TODO this should come from the model, as start and end
 
     def check_semaphore(self):
         print("si esta checando semaforos")

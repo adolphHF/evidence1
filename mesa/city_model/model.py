@@ -2,17 +2,17 @@ import mesa
 from mesa import Model
 from agents import CarAgent, TrafficLightAgent
 from mesa.space import MultiGrid
-import numpy as np
 
 class CityModel(mesa.Model):
     """Modelo que representa una ciudad con capas de edificios y estacionamientos en una cuadrícula."""
 
-    def __init__(self, width=24, height=24, num_buildings=11, num_parking=17, seed=None):
+    def __init__(self, width=24, height=24, num_buildings=11, num_parking=17, num_cars = 2, seed=None):
         super().__init__(seed=seed)
         self.width = width
         self.height = height
         self.num_buildings = num_buildings
         self.num_parking = num_parking
+        self.num_cars = num_cars
 
         semaphores_layer = mesa.space.PropertyLayer("semaphore", width, height, 0) #create the semaphores layer
 
@@ -32,14 +32,38 @@ class CityModel(mesa.Model):
                                         (14, 17), (15, 17), #9
                                         ]
         
+        self.parking_positions = [
+            (9,2), 
+            (2,3),
+            (17,3),
+            (11,4),
+            (20,4),#5
+            (6,5),
+            (8,8),
+            (21,9),
+            (4,10),
+            (11,10),#10
+            (16,10),
+            (2,17),
+            (17,17),
+            (19,17),
+            (5,20),#15
+            (8,20),
+            (19,20)
+        ]
 
-        self.parking_layer = mesa.space.PropertyLayer("parkings", width, height, np.int64(0), np.int64)
+        for _ in range(self.num_cars):
+            selected_positions = self.random.sample(self.parking_positions, 2)
+            car = CarAgent(self, selected_positions[0], selected_positions[1])
+            self.grid.place_agent(car, selected_positions[0])
+        
+        self.add_semaphores() #place semaphore agents
 
-        self.roundabout_layer = mesa.space.PropertyLayer("roundabout", width, height, np.int64(0), np.int64)
+        self.buildings_layer = [[0 for _ in range(width)] for _ in range(height)]
 
-        self.buildings_layer= mesa.space.PropertyLayer("buildings", width, height, np.int64(0), np.int64)
+        self.parking_layer = [[0 for _ in range(width)] for _ in range(height)]
 
-        self.grid = mesa.space.MultiGrid(width, height, True, property_layers=[self.buildings_layer, self.parking_layer, self.roundabout_layer])
+        self.roundabout_layer = [[0 for _ in range(width)] for _ in range(height)]
 
         #Primer bloque
         self.add_building(2, 2, 11, 5)
@@ -82,10 +106,6 @@ class CityModel(mesa.Model):
 
         self.add_roundabout(13,13, 14,14)
 
-        car = CarAgent(self)
-        self.grid.place_agent(car, (0,0))
-        self.add_semaphores() #place semaphore agents
-
     def add_semaphores(self):
         self.traffic_lights = []
         for idx, pos in enumerate(self.traffic_light_positions):
@@ -94,23 +114,24 @@ class CityModel(mesa.Model):
             traffic_light = TrafficLightAgent(model=self, initial_color=initial_color)
             self.grid.place_agent(traffic_light, pos)
             self.traffic_lights.append(traffic_light)
+            self.traffic_lights = []
 
     def add_building(self, x_start, y_start, x_end, y_end):
         """Rellenar la capa de edificios en la cuadrícula dentro de las coordenadas dadas."""
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-                self.buildings_layer.set_cell((x,y),1)
+                self.buildings_layer[x][y] = 1
 
     def add_parking(self, x_start, y_start, x_end, y_end):
         """Rellenar la capa de estacionamientos en la cuadrícula dentro de las coordenadas dadas."""
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-               self.parking_layer.set_cell((x,y),1)
+                self.parking_layer[x][y] = 1
 
     def add_roundabout(self, x_start, y_start, x_end, y_end):
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-                self.roundabout_layer.set_cell((x,y),1)
+                self.roundabout_layer[x][y] = 1
 
 
     def step(self):
