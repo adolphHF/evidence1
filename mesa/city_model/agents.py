@@ -1,7 +1,6 @@
 import mesa
 from mesa import Agent
 from pruebitaBFS import generate_route #import function to generate the full path the agent should follows
-#TODO not obeying the semaphores
 
 #First the traffic light agent
 
@@ -50,41 +49,20 @@ class CarAgent(Agent):
                 if isinstance(agent, TrafficLightAgent):
                     semaphore = agent
                     print(f"Semaphore found at {self.pos}, allow_pass: {semaphore.allow_pass}")
-                    return semaphore.allow_pass
-                
-        else:
-            print("no semaphore here")
-        return None 
-
-        """
-        traffic_light_in_pos = self.model.agents_by_type[TrafficLightAgent].select(lambda a: a.pos == self.pos)
-        if len(traffic_light_in_pos) > 0:
-            traffic_light = traffic_light_in_pos[0]
-            if traffic_light.allow_pass == False:
-                print("WAITING")
-                return # Espera en rojo
-        #Verify the current cell don't have a semaphore and evaluate it's state
-        x,y = self.pos
-        if self.model.grid.properties["semaphore"].data[x, y] == 1:
-
-            print("A semaphore was reached")
-        """
+                    return semaphore.allow_pass        
+        return True
         
 
     def step(self):
         """Perform one step in the simulation."""
         if self.route:
-            # Get the next position in the route
-            #if self.check_semaphore():
-            val = self.check_semaphore()
-            print(val)
-            next_position = self.route.pop(0)  # Remove and get the first step
-            # Move the agent to the next position
-            self.model.grid.move_agent(self, next_position)
-            # Update current position
-            #self.current_position = next_position#TODO why does it need this?
-            print(f"Moved to {next_position}. Remaining route: {self.route}")
-
+            if self.check_semaphore():
+                next_position = self.route.pop(0)  # Remove and get the first step
+                # Move the agent to the next position
+                self.model.grid.move_agent(self, next_position)
+                print(f"Moved to {next_position}. Remaining route: {self.route}")
+            else:
+                print("Found a stop")
         else:
             # Route is empty, the car has reached its destination
             self.parked = True

@@ -18,21 +18,20 @@ class CityModel(mesa.Model):
         self.grid = MultiGrid(width, height, False, (semaphores_layer)) #the false corresponds to if it's torus or not
 
         #First place the semaphores
-        self.traffic_light_positions = [#TODO, cambiar esto es 17,0 y 17,1 solo esta asi para las pruebitas
+        self.traffic_light_positions = [
+                                        (17, 0), (17, 1),#1
                                         (2, 6), (2, 7), #4
                                         (7, 6), (7, 7),#5
                                         (21, 6), (21,7), #6
                                         (16, 18), (16, 19), #10 this is the last initialized green
                                         (18, 2), (19,2), #2
-                                        (11, 0), (11, 1),
                                         (22, 5), (23, 5),#3
                                         (0, 8), (1, 8), #7
                                         (5, 8), (6, 8),#8
                                         (14, 17), (15, 17), #9
                                         ]
         
-        self.add_semaphores() #call the function to create the semaphores
-        print(self.grid.properties["semaphore"].data) #TODO remove, only for debug purposes
+        self.add_semaphores() #place semaphore agents
 
         self.buildings_layer = [[0 for _ in range(width)] for _ in range(height)]
 
@@ -80,12 +79,6 @@ class CityModel(mesa.Model):
         self.add_parking(19, 20, 19, 20)
 
         self.add_roundabout(13,13, 14,14)
-
-        #self.traffic_lights = []
-        #for pos in self.traffic_light_positions:
-        #    traffic_light = TrafficLightAgent(model=self)
-        #    self.grid.place_agent(traffic_light, pos)
-        #    self.traffic_lights.append(traffic_light)
 
         car = CarAgent(self)
         self.grid.place_agent(car, (0,0))
