@@ -1,0 +1,16 @@
+Team Members
+
+Credits Prefabs Unity
+The following assets were used under their respective licenses:
+
+Unique Statue Model
+https://assetstore.unity.com/packages/3d/environments/unique-statue-model-62999
+
+POLYGON CITY package
+https://assetstore.unity.com/packages/3d/environments/urban/city-package-107224
+
+Voxel Universe Free
+https://assetstore.unity.com/packages/3d/environments/voxel-universe-free-91388
+
+SimplePoly City - Low Poly Assets
+https://assetstore.unity.com/packages/3d/environments/simplepoly-city-low-poly-assets-58899
