@@ -2,6 +2,7 @@ import mesa
 from mesa import Model
 from agents import CarAgent, TrafficLightAgent
 from mesa.space import MultiGrid
+import numpy as np
 
 class CityModel(mesa.Model):
     """Modelo que representa una ciudad con capas de edificios y estacionamientos en una cuadrícula."""
@@ -14,12 +15,14 @@ class CityModel(mesa.Model):
         self.num_parking = num_parking
         self.grid = MultiGrid(width, height, torus=False)
 
-        self.buildings_layer = [[0 for _ in range(width)] for _ in range(height)]
 
-        self.parking_layer = [[0 for _ in range(width)] for _ in range(height)]
+        self.parking_layer = mesa.space.PropertyLayer("parkings", width, height, np.int64(0), np.int64)
 
-        self.roundabout_layer = [[0 for _ in range(width)] for _ in range(height)]
+        self.roundabout_layer = mesa.space.PropertyLayer("roundabout", width, height, np.int64(0), np.int64)
 
+        self.buildings_layer= mesa.space.PropertyLayer("buildings", width, height, np.int64(0), np.int64)
+
+        self.grid = mesa.space.MultiGrid(width, height, True, property_layers=[self.buildings_layer, self.parking_layer, self.roundabout_layer])
 
         #Primer bloque
         self.add_building(2, 2, 11, 5)
@@ -76,18 +79,18 @@ class CityModel(mesa.Model):
         """Rellenar la capa de edificios en la cuadrícula dentro de las coordenadas dadas."""
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-                self.buildings_layer[x][y] = 1
+                self.buildings_layer.set_cell((x,y),1)
 
     def add_parking(self, x_start, y_start, x_end, y_end):
         """Rellenar la capa de estacionamientos en la cuadrícula dentro de las coordenadas dadas."""
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-                self.parking_layer[x][y] = 1
+               self.parking_layer.set_cell((x,y),1)
 
     def add_roundabout(self, x_start, y_start, x_end, y_end):
         for x in range(x_start, x_end + 1):
             for y in range(y_start, y_end + 1):
-                self.roundabout_layer[x][y] = 1
+                self.roundabout_layer.set_cell((x,y),1)
 
 
     def step(self):
