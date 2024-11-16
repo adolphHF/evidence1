@@ -1,9 +1,8 @@
-Team Members
-
 Credits Prefabs Unity
 The following assets were used under their respective licenses:
 
 Unique Statue Model
+
 https://assetstore.unity.com/packages/3d/environments/unique-statue-model-62999
 
 POLYGON CITY package
