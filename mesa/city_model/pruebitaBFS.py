@@ -4,7 +4,7 @@ road_sections = [
     # Cols
     {
         #SectId: 0
-        "cells": list(chain(zip(range(0, 24), repeat(0, 24)), zip(range(0, 24), repeat(1, 24)))), #TODO i think that in repeat it should goes until 23 since it's actually creating 24 zeros and ones
+        "cells": list(chain(zip(range(0, 24), repeat(0, 24)), zip(range(0, 24), repeat(1, 24)))),
         "main_direction": "d",
         "secondary_direction": "lr"
     },
@@ -84,13 +84,13 @@ road_sections = [
     # Rows
     {
         #SectId: 13
-        "cells": list(chain(zip(repeat(0, 24), range(0, 24)), zip(repeat(1, 24), range(0, 24)))), #TODO aqui no se si sea buena idea que el repeat como es el primero tenga 24, aunque imagino que el zip se encarga de eliminar los mismatch
+        "cells": list(chain(zip(repeat(0, 24), range(0, 24)), zip(repeat(1, 24), range(0, 24)))),
         "main_direction": "l",
         "secondary_direction": "ud"
     },
     {
         #SectId: 14
-        "cells": list(chain(zip(repeat(5, 8), range(6, 14)), zip(repeat(6, 8), range(6, 14)))),#TODO aqui verificar que si esta bien con respecto al mapita
+        "cells": list(chain(zip(repeat(5, 8), range(6, 14)), zip(repeat(6, 8), range(6, 14)))),
         "main_direction": "l",
         "secondary_direction": "ud"
     },
@@ -196,6 +196,39 @@ road_sections = [
         "main_direction": "u",
         "secondary_direction": "l"
     },
+
+    # Parking spots UP
+    {
+        #SectId: 31
+        "cells": [(2,3), (2,17), (8,20), (16,10), (20,4)],
+        "main_direction": "u",
+        "secondary_direction": "u"
+    },
+
+    # Parking spots DOWN
+    {
+        #SectId: 32
+        "cells": [(4,10), (5,20), (11,4), (11,10), (17,3), (21,9)],
+        "main_direction": "d",
+        "secondary_direction": "d"
+    },
+
+    # Parking spots LEFT
+    {
+        #SectId: 33
+        "cells": [(9,2), (8,8), (19,20)],
+        "main_direction": "l",
+        "secondary_direction": "l"
+    },
+
+    # Parking spots RIGHT
+    {
+        #SectId: 34
+        "cells": [(6,5), (17,17), (19, 17)],
+        "main_direction": "l",
+        "secondary_direction": "l"
+    },
+
 ]
 
 building_cells = list(chain( #TODO double check
@@ -303,7 +336,7 @@ def get_path(predecessors, start, end):
     return path
 
 def main():
-    start = (9, 1)
+    start = (5, 20)
     end = (6, 5)
     predecessors = bfs(start, end)
     path = get_path(predecessors, start, end)
@@ -317,5 +350,3 @@ def generate_route(start, end):
 
 
 main()
-
-#TODO no se que le duele, pero no acepta cualquier punto, por ejemplo, si le pasas 2 parking, no jala
