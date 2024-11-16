@@ -32,8 +32,6 @@ class CityModel(mesa.Model):
                                         (14, 17), (15, 17), #9
                                         ]
         
-        self.add_semaphores() #place semaphore agents
-
 
         self.parking_layer = mesa.space.PropertyLayer("parkings", width, height, np.int64(0), np.int64)
 
@@ -86,6 +84,7 @@ class CityModel(mesa.Model):
 
         car = CarAgent(self)
         self.grid.place_agent(car, (0,0))
+        self.add_semaphores() #place semaphore agents
 
     def add_semaphores(self):
         self.traffic_lights = []
@@ -95,7 +94,6 @@ class CityModel(mesa.Model):
             traffic_light = TrafficLightAgent(model=self, initial_color=initial_color)
             self.grid.place_agent(traffic_light, pos)
             self.traffic_lights.append(traffic_light)
-            self.traffic_lights = []
 
     def add_building(self, x_start, y_start, x_end, y_end):
         """Rellenar la capa de edificios en la cuadrícula dentro de las coordenadas dadas."""
