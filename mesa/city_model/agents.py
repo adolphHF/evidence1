@@ -1,7 +1,6 @@
 import mesa
 from mesa import Agent
 from pruebitaBFS import generate_route #import function to generate the full path the agent should follows
-#TODO not obeying the semaphores
 
 #First the traffic light agent
 
@@ -41,17 +40,29 @@ class CarAgent(Agent):
         self.parked = False
         self.route = generate_route((9,1), (6,5)) #TODO this should come from the model, as start and end
 
+    def check_semaphore(self):
+        print("si esta checando semaforos")
+        cellmates = self.model.grid.get_cell_list_contents([self.pos]) #with this, check if any other agent
+        if len(cellmates) > 1:  # Check if there are multiple agents in the cell
+            for agent in cellmates:
+                # Check if the agent is of type TrafficLightAgent
+                if isinstance(agent, TrafficLightAgent):
+                    semaphore = agent
+                    print(f"Semaphore found at {self.pos}, allow_pass: {semaphore.allow_pass}")
+                    return semaphore.allow_pass        
+        return True
+        
+
     def step(self):
         """Perform one step in the simulation."""
         if self.route:
-            # Get the next position in the route
-            next_position = self.route.pop(0)  # Remove and get the first step
-            # Move the agent to the next position
-            self.model.grid.move_agent(self, next_position)
-            # Update current position
-            self.current_position = next_position
-            print(f"Moved to {next_position}. Remaining route: {self.route}")
-
+            if self.check_semaphore():
+                next_position = self.route.pop(0)  # Remove and get the first step
+                # Move the agent to the next position
+                self.model.grid.move_agent(self, next_position)
+                print(f"Moved to {next_position}. Remaining route: {self.route}")
+            else:
+                print("Found a stop")
         else:
             # Route is empty, the car has reached its destination
             self.parked = True

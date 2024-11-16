@@ -13,7 +13,26 @@ class CityModel(mesa.Model):
         self.height = height
         self.num_buildings = num_buildings
         self.num_parking = num_parking
-        self.grid = MultiGrid(width, height, torus=False)
+
+        semaphores_layer = mesa.space.PropertyLayer("semaphore", width, height, 0) #create the semaphores layer
+
+        self.grid = MultiGrid(width, height, False, (semaphores_layer)) #the false corresponds to if it's torus or not
+
+        #First place the semaphores
+        self.traffic_light_positions = [
+                                        (17, 0), (17, 1),#1
+                                        (2, 6), (2, 7), #4
+                                        (7, 6), (7, 7),#5
+                                        (21, 6), (21,7), #6
+                                        (16, 18), (16, 19), #10 this is the last initialized green
+                                        (18, 2), (19,2), #2
+                                        (22, 5), (23, 5),#3
+                                        (0, 8), (1, 8), #7
+                                        (5, 8), (6, 8),#8
+                                        (14, 17), (15, 17), #9
+                                        ]
+        
+        self.add_semaphores() #place semaphore agents
 
 
         self.parking_layer = mesa.space.PropertyLayer("parkings", width, height, np.int64(0), np.int64)
@@ -65,15 +84,18 @@ class CityModel(mesa.Model):
 
         self.add_roundabout(13,13, 14,14)
 
-        self.traffic_light_positions = [(10, 0), (10, 1)]
-        self.traffic_lights = []
-        for pos in self.traffic_light_positions:
-            traffic_light = TrafficLightAgent(model=self)
-            self.grid.place_agent(traffic_light, pos)
-            self.traffic_lights.append(traffic_light)
-
         car = CarAgent(self)
         self.grid.place_agent(car, (0,0))
+
+    def add_semaphores(self):
+        self.traffic_lights = []
+        for idx, pos in enumerate(self.traffic_light_positions):
+            # Set the initial color based on the index
+            initial_color = "green" if idx < 10 else "red"
+            traffic_light = TrafficLightAgent(model=self, initial_color=initial_color)
+            self.grid.place_agent(traffic_light, pos)
+            self.traffic_lights.append(traffic_light)
+            self.traffic_lights = []
 
     def add_building(self, x_start, y_start, x_end, y_end):
         """Rellenar la capa de edificios en la cuadrícula dentro de las coordenadas dadas."""
