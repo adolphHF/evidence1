@@ -225,8 +225,8 @@ road_sections = [
     {
         #SectId: 34
         "cells": [(6,5), (17,17), (19, 17)],
-        "main_direction": "l",
-        "secondary_direction": "l"
+        "main_direction": "r",
+        "secondary_direction": "r"
     },
 
 ]
