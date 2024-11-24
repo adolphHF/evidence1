@@ -304,7 +304,7 @@ def get_neighbors(position):
         neighbors.append((x, y+1))
     return neighbors
 
-def bfs(start, end):
+def bfs(start, end, model, car_class):
     queue = [start]
     visited = set()
     predecessors = {}
@@ -317,11 +317,14 @@ def bfs(start, end):
         for neighbor in get_neighbors(current):
             is_empty_cell = neighbor not in building_cells or neighbor == end
             is_out_of_bounds = neighbor[0] < 0 or neighbor[0] >= 24 or neighbor[1] < 0 or neighbor[1] >= 24
+            if not is_out_of_bounds:
+                cellmates = model.grid.get_cell_list_contents([neighbor])
+                is_empty_cell = is_empty_cell and not any(isinstance(agent, car_class) for agent in cellmates)
+
             if neighbor not in visited and is_empty_cell and not is_out_of_bounds:
                 visited.add(neighbor)
                 predecessors[neighbor] = current
                 queue.append(neighbor)
-    
     return predecessors
 
 
@@ -330,6 +333,8 @@ def get_path(predecessors, start, end):
     path = []
     while current != start:
         path.append(current)
+        if current not in predecessors:
+            return None # No path found
         current = predecessors[current]
     path.append(start)
     path.reverse()
@@ -342,11 +347,10 @@ def main():
     path = get_path(predecessors, start, end)
     print(path)
 
-def generate_route(start, end):
-    predecessors = bfs(start, end)
+def generate_route(start, end, model, car_class):
+    predecessors = bfs(start, end, model, car_class)
     path = get_path(predecessors, start, end)
-    print(path)
     return path
 
 
-main()
+# main()

@@ -37,18 +37,25 @@ class CarAgent(Agent):
     """Agente que representa un vehículo que puede moverse en el modelo."""
     def __init__(self, model, start, end):
         super().__init__(model)
+        self.start = start
+        self.end = end
         self.parked = False
-        self.route = generate_route(start, end) #TODO this should come from the model, as start and end
+        self.route = self.get_route(start, end, model)
+
+        if self.route:
+            self.route = self.route[1:]  # Remove the starting position from the route
+
+    
+    def get_route(self, start, end, model):
+        return generate_route(start, end, model, CarAgent)
 
     def check_semaphore(self):
-        print("si esta checando semaforos")
         cellmates = self.model.grid.get_cell_list_contents([self.pos]) #with this, check if any other agent
         if len(cellmates) > 1:  # Check if there are multiple agents in the cell
             for agent in cellmates:
                 # Check if the agent is of type TrafficLightAgent
                 if isinstance(agent, TrafficLightAgent):
                     semaphore = agent
-                    print(f"Semaphore found at {self.pos}, allow_pass: {semaphore.allow_pass}")
                     return semaphore.allow_pass        
         return True
         
@@ -58,14 +65,25 @@ class CarAgent(Agent):
         if self.route:
             if self.check_semaphore():
                 next_position = self.route.pop(0)  # Remove and get the first step
+
+                # Check if there is a car in the next position
+                cellmates = self.model.grid.get_cell_list_contents([next_position])
+                if any(isinstance(agent, CarAgent) for agent in cellmates) and next_position != self.end:
+                    self.route = self.get_route(self.pos, self.route[-1], self.model)
+
+                    if not self.route:
+                        return
+
+                    self.route = self.route[1:]  # Remove the starting position from the route
+                    next_position = self.route.pop(0)
+
                 # Move the agent to the next position
                 self.model.grid.move_agent(self, next_position)
-                print(f"Moved to {next_position}. Remaining route: {self.route}")
-            else:
-                print("Found a stop")
+        elif self.pos != self.end:
+            # Recalculate route
+            self.route = self.get_route(self.pos, self.end, self.model)
+            if self.route:
+                self.route = self.route[1:]
         else:
             # Route is empty, the car has reached its destination
             self.parked = True
-            print("Car is parked. Route complete.")
-
-

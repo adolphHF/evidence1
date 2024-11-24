@@ -55,10 +55,24 @@ class CityModel(mesa.Model):
             (19,20)
         ]
 
+        self.cars = []
+
         for _ in range(self.num_cars):
             selected_positions = self.random.sample(self.parking_positions, 2)
             car = CarAgent(self, selected_positions[0], selected_positions[1])
             self.grid.place_agent(car, selected_positions[0])
+            self.cars.append(car)
+        
+        for i in range(2):
+            car = CarAgent(self, (0,22-i), (9,2))
+            self.grid.place_agent(car, (0,23-i))
+            self.cars.append(car)
+
+        for car in self.cars:
+            car.route = car.get_route(car.pos, car.route[-1], self)
+            if car.route:
+                car.route = car.route[1:]
+
         
         self.add_semaphores() #place semaphore agents
 
