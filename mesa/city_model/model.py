@@ -55,26 +55,6 @@ class CityModel(mesa.Model):
             (19,20)
         ]
 
-        self.cars = []
-
-        for _ in range(self.num_cars):
-            selected_positions = self.random.sample(self.parking_positions, 2)
-            car = CarAgent(self, selected_positions[0], selected_positions[1])
-            self.grid.place_agent(car, selected_positions[0])
-            self.cars.append(car)
-        
-        for i in range(2):
-            car = CarAgent(self, (0,22-i), (9,2))
-            self.grid.place_agent(car, (0,23-i))
-            self.cars.append(car)
-
-        for car in self.cars:
-            car.route = car.get_route(car.pos, car.route[-1], self)
-            if car.route:
-                car.route = car.route[1:]
-
-        
-        self.add_semaphores() #place semaphore agents
 
 
         #Primer bloque
@@ -117,6 +97,16 @@ class CityModel(mesa.Model):
         self.add_parking(19, 20, 19, 20)
 
         self.add_roundabout(13,13, 14,14)
+
+        self.road_positions = [(a,b) for a in range(24) for b in range(24) if self.parking_layer.data[a][b] == 0 and self.buildings_layer.data[a][b] == 0 and self.roundabout_layer.data[a][b] == 0]
+
+        starting_positions = self.random.sample(self.road_positions, self.num_cars)
+
+        for i in range(self.num_cars):
+            car = CarAgent(self, starting_positions[i], self.random.choice(self.parking_positions))
+            self.grid.place_agent(car, starting_positions[i])
+
+        self.add_semaphores() #place semaphore agents
 
     def add_semaphores(self):
         self.traffic_lights = []
