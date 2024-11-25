@@ -1,4 +1,4 @@
-from model import CityModel
+from city_model.model import CityModel
 
 city_model = CityModel()
 

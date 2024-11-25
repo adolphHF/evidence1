@@ -1,6 +1,6 @@
 import mesa
 from mesa import Model
-from .agents import CarAgent, TrafficLightAgent
+from city_model.agents import CarAgent, TrafficLightAgent
 from mesa.space import MultiGrid
 import numpy as np
 
