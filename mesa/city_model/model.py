@@ -1,6 +1,6 @@
 import mesa
 from mesa import Model
-from agents import CarAgent, TrafficLightAgent
+from .agents import CarAgent, TrafficLightAgent
 from mesa.space import MultiGrid
 import numpy as np
 
@@ -163,3 +163,10 @@ class CityModel(mesa.Model):
                     row_display += " . "
             print(row_display)
         print("\n")
+    
+    def get_car_positions(self):
+        car_agents = self.agents_by_type[CarAgent]
+        car_data = []
+        for car in car_agents:
+            car_data.append({"id": car.unique_id, "x": car.pos[0], "y": car.pos[1]})
+        return car_data

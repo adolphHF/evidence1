@@ -1,6 +1,6 @@
 import mesa
 from mesa import Agent
-from bfs_service import BFSService #import function to generate the full path the agent should follows
+from .bfs_service import BFSService #import function to generate the full path the agent should follows
 
 class TrafficLightAgent(Agent):
     """Agente que representa un semáforo con colores y control de paso."""
