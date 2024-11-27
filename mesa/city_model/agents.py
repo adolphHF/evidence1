@@ -67,7 +67,7 @@ class CarAgent(Agent):
             next_position = self.route.pop(0)  
 
             cellmates = self.model.grid.get_cell_list_contents([next_position])
-            if any(isinstance(agent, CarAgent) for agent in cellmates) and next_position != self.end:
+            if any(isinstance(agent, CarAgent) for agent in cellmates):
                 self.route = self.calculate_route(self.pos, self.end)
                 if not self.route:
                     return
@@ -75,7 +75,7 @@ class CarAgent(Agent):
 
             # Move the agent to the next position
             self.model.grid.move_agent(self, next_position)
-            if self.pos == self.end:
+            if self.pos == self.end and self.end in self.model.parking_positions:
                 self.parked = True
 
         else:
@@ -85,4 +85,5 @@ class CarAgent(Agent):
                 is_outside = next_position[0] < 0 or next_position[1] < 0 or next_position[0] >= 24 or next_position[1] >= 24
                 if not is_outside and not any(isinstance(agent, CarAgent) for agent in self.model.grid.get_cell_list_contents([next_position])):
                     self.model.grid.move_agent(self, next_position)
-            self.route = self.calculate_route(self.pos, self.end)
+            random_position = self.model.random.choice(self.model.road_positions)
+            self.route = self.calculate_route(self.pos, random_position)
