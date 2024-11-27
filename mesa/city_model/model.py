@@ -100,11 +100,16 @@ class CityModel(mesa.Model):
 
         self.road_positions = [(a,b) for a in range(24) for b in range(24) if self.parking_layer.data[a][b] == 0 and self.buildings_layer.data[a][b] == 0 and self.roundabout_layer.data[a][b] == 0]
 
-        starting_positions = self.random.sample(self.road_positions, self.num_cars)
+        parking_position = self.parking_positions[0]
 
-        for i in range(self.num_cars):
-            car = CarAgent(self, starting_positions[i], self.random.choice(self.parking_positions))
-            self.grid.place_agent(car, starting_positions[i])
+        car_in_parking = CarAgent(self, parking_position, parking_position)
+        self.grid.place_agent(car_in_parking, parking_position)
+
+        for i in range(self.num_cars - 1): 
+            starting_position = self.random.choice(self.road_positions)
+            target_parking = self.random.choice(self.parking_positions)
+            car = CarAgent(self, starting_position, target_parking)
+            self.grid.place_agent(car, starting_position)
 
         self.add_semaphores() #place semaphore agents
 
