@@ -351,11 +351,11 @@ class BFSService():
                 return predecessors
 
             for neighbor in self.get_neighbors(current):
-                is_empty_cell = neighbor not in self.building_cells or neighbor == end
+                is_empty_cell = neighbor not in self.building_cells or (neighbor == end)
                 is_out_of_bounds = neighbor[0] < 0 or neighbor[0] >= 24 or neighbor[1] < 0 or neighbor[1] >= 24
                 if not is_out_of_bounds:
                     cellmates = self.model.grid.get_cell_list_contents([neighbor])
-                    is_empty_cell = (neighbor == end) or (is_empty_cell and not any(isinstance(agent, self.car_class) for agent in cellmates))
+                    is_empty_cell = (is_empty_cell and not any(isinstance(agent, self.car_class) for agent in cellmates))
 
                 if neighbor not in visited and is_empty_cell and not is_out_of_bounds:
                     visited.add(neighbor)
