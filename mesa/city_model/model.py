@@ -166,7 +166,7 @@ class CityModel(mesa.Model):
     
     def get_car_positions(self):
         car_agents = self.agents_by_type[CarAgent]
-        car_data = []
+        car_data = { "agents": []}
         for car in car_agents:
-            car_data.append({"id": car.unique_id, "x": car.pos[0], "y": car.pos[1]})
+            car_data["agents"].append({"id": car.unique_id, "x": car.pos[0], "y": car.pos[1]})
         return car_data
